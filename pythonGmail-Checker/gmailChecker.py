@@ -25,14 +25,12 @@ are all logged. Else, the time sent (since we don't have a receive time) is logg
 #the script will send the email and then wait to check for the number of seconds below
 wait = 600
 
-
 #importing necessary libraries
 import smtplib, imaplib, email, time, re, json
 from datetime import datetime
 file_path = open('config.py', 'r')
 json_file = file_path.read()
 json_data = json.loads(json_file)
-
 
 #setting start time
 start = time.time()
@@ -42,9 +40,8 @@ fromaddr = json_data["credentials"][0]["username2"]
 toaddr = 'postmaster@byu.edu'
 msg = 'Subject: %s\n\n%s' % (start, 'This email is sent in order to verify if BYU mail flow is working correctly')
 
-
 #Credentials
-username = json_data["credentials"][0]["username2"]
+username = fromaddr #same as above, simply renaming for clarification purposes
 password = json_data["credentials"][0]["password"]
 
 #The actual mail send
@@ -66,13 +63,11 @@ def extract_body(payload):
         return '\n'.join([extract_body(part.get_payload()) for part in payload])
 
 conn = imaplib.IMAP4_SSL("imap.gmail.com", 993)
-conn.login(json_data["credentials"][0]["username"], json_data["credentials"][0]["password"])
+conn.login(json_data["credentials"][0]["username"], password)
 conn.select()
 typ, data = conn.search(None, 'UNSEEN')
-subject = "1232112312"
+subject = "1232112312" #I set the "subject"  to a random number so that is isnt' undefined
 subject_ID = "FW: " + str(start)
-
-#I set the "subject" above to a random number so that is isnt' undefined
 #if the subject doesn't match what was sent out then it'll report an error
 
 try:
@@ -93,7 +88,6 @@ try:
                 import pytz
                 from datetime import timedelta
                 import datetime
-
 
                 local = pytz.timezone ("America/Los_Angeles")
 
